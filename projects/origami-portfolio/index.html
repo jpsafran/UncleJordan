@@ -50,65 +50,30 @@
             const modalCaption = document.querySelector('.modal-caption');
             const closeBtn = document.querySelector('.close-modal');
             
+            // --- START ---
+            // List of all the images in the 'Origamis' directory
+            const imageFiles = [
+                "1.jpeg", "10.jpeg", "11.jpeg", "12.jpeg", "13.jpeg", "14.jpeg", 
+                "15.png", "16.png", "17.png", "18.png", "19.jpg", "2.jpeg", 
+                "20.png", "21.png", "22.jpeg", "23.png", "24.png", "25.png", 
+                "26.jpeg", "27.jpeg", "28.jpeg", "29.jpeg", "3.jpeg", "4.jpeg", 
+                "5.jpeg", "6.jpeg", "7.jpeg", "8.jpeg", "9.jpeg"
+            ];
+            // --- END ---
+
             // Clear any existing content
             galleryGrid.innerHTML = '';
             
-            // Display loading message
-            const loadingItem = document.createElement('div');
-            loadingItem.className = 'loading-message';
-            loadingItem.innerHTML = '<p>Loading origami images...</p>';
-            galleryGrid.appendChild(loadingItem);
-            
-            // Generate an array of possible filenames to check (1.jpeg, 1.png, 2.jpeg, 2.png, etc.)
-            const possibleFiles = [];
-            for (let i = 1; i <= 100; i++) {
-                possibleFiles.push(`${i}.jpeg`);
-                possibleFiles.push(`${i}.png`);
-            }
-            
-            // Check which images actually exist
-            Promise.all(
-                possibleFiles.map(filename => {
-                    return new Promise(resolve => {
-                        const img = new Image();
-                        img.onload = () => {
-                            resolve({
-                                file: filename,
-                                loaded: true
-                            });
-                        };
-                        img.onerror = () => {
-                            // Image failed to load
-                            resolve({ file: filename, loaded: false });
-                        };
-                        img.src = `./Origamis/${filename}`;
-                    });
-                })
-            ).then(results => {
-                // Remove loading message
-                galleryGrid.innerHTML = '';
-                
-                // Filter only successfully loaded images
-                const loadedImages = results.filter(img => img.loaded);
-                
-                if (loadedImages.length === 0) {
-                    galleryGrid.innerHTML = '<p class="no-images">No origami images found in the Origamis folder.</p>';
-                    return;
-                }
-                
-                // Create gallery items for each image
-                loadedImages.forEach(item => {
-                    createGalleryItem(item);
-                });
-                
-                console.log(`Loaded ${loadedImages.length} origami images`);
+            // Create gallery items for each image
+            imageFiles.forEach(item => {
+                createGalleryItem(item);
             });
             
             function createGalleryItem(item) {
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.innerHTML = `
-                    <img src="./Origamis/${item.file}" alt="Origami">
+                    <img src="./Origamis/${item}" alt="Origami">
                     <div class="expand-hint">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                             <path d="M15 3h6v6h-2V5h-4V3zM3 9V3h6v2H5v4H3zm12 12v-2h4v-4h2v6h-6zm-6 0H3v-6h2v4h4v2z" fill="currentColor"/>
@@ -126,7 +91,7 @@
             // Modal functionality
             function openModal(item) {
                 modal.style.display = 'flex';
-                modalImg.src = `./Origamis/${item.file}`;
+                modalImg.src = `./Origamis/${item}`;
                 modalImg.alt = "Origami";
                 modalCaption.innerHTML = ''; // Empty caption
                 document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is open
